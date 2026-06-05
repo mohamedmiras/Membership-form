@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getSubmissions, updateSubmissionStatus, deleteSubmission } from '../utils/storage';
 import type { Submission } from '../types';
-import { Search, CheckCircle, XCircle, Trash2, Eye, Download, Image as ImageIcon } from 'lucide-react';
+import { Search, CheckCircle, XCircle, Trash2, Eye } from 'lucide-react';
 
 export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
