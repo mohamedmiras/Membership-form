@@ -5,16 +5,13 @@ import { CheckCircle, Download, PlusCircle } from 'lucide-react';
 export default function Success() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [posterDataUrl, setPosterDataUrl] = useState<string | null>(null);
+  const [posterDataUrl] = useState<string | null>(location.state?.posterDataUrl || null);
 
   useEffect(() => {
-    if (location.state?.posterDataUrl) {
-      setPosterDataUrl(location.state.posterDataUrl);
-    } else {
-      // If no poster in state, redirect back home
+    if (!posterDataUrl) {
       navigate('/');
     }
-  }, [location, navigate]);
+  }, [posterDataUrl, navigate]);
 
   const handleDownload = () => {
     if (!posterDataUrl) return;

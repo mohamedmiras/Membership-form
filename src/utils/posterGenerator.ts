@@ -76,15 +76,13 @@ export const generatePoster = async (
         
         ctx.fillText(fullName.toUpperCase(), canvas.width / 2, nameY);
 
-        // House Name
-        let houseNameY = nameY;
         if (houseName) {
           ctx.font = `500 ${canvas.width * 0.022}px 'Montserrat', sans-serif`;
           ctx.fillStyle = '#6B7280'; // Medium gray
           
           // Space B should be half of Space A
           const spaceBetweenNames = spaceBetweenPhotoAndName / 2;
-          houseNameY = nameY + spaceBetweenNames;
+          const houseNameY = nameY + spaceBetweenNames;
           ctx.fillText(houseName, canvas.width / 2, houseNameY);
         }
 

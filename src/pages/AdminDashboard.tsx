@@ -11,14 +11,15 @@ export default function AdminDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSub, setSelectedSub] = useState<Submission | null>(null);
 
-  useEffect(() => {
-    loadSubmissions();
-  }, []);
-
   const loadSubmissions = async () => {
     const data = await getSubmissions();
     setSubmissions(data.sort((a, b) => b.createdAt - a.createdAt));
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadSubmissions();
+  }, []);
 
   const handleStatusChange = async (id: string, status: 'approved' | 'rejected') => {
     await updateSubmissionStatus(id, status);

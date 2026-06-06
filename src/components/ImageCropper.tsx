@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import Cropper from 'react-easy-crop';
+import Cropper, { Area } from 'react-easy-crop';
 import 'react-easy-crop/react-easy-crop.css';
 import { X, Check } from 'lucide-react';
 
@@ -13,7 +13,7 @@ interface ImageCropperProps {
 export default function ImageCropper({ imageSrc, onCropComplete, onCancel }: ImageCropperProps) {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
 
   useEffect(() => {
     // Prevent scrolling of background page while cropping
@@ -23,7 +23,7 @@ export default function ImageCropper({ imageSrc, onCropComplete, onCancel }: Ima
     };
   }, []);
 
-  const handleCropComplete = useCallback((_croppedArea: any, croppedAreaPixels: any) => {
+  const handleCropComplete = useCallback((_croppedArea: Area, croppedAreaPixels: Area) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
@@ -35,7 +35,7 @@ export default function ImageCropper({ imageSrc, onCropComplete, onCancel }: Ima
       image.src = url;
     });
 
-  const getCroppedImg = async (imageSrc: string, pixelCrop: any): Promise<Blob | null> => {
+  const getCroppedImg = async (imageSrc: string, pixelCrop: Area): Promise<Blob | null> => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
