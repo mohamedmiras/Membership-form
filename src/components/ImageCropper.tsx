@@ -138,10 +138,9 @@ export default function ImageCropper({ imageSrc, onCropComplete, onCancel }: Ima
           </button>
         </div>
       </div>
-        </div>
-      </div>
     </div>
-  );
+  </div>
+);
 
   return createPortal(cropperContent, document.body);
 }
