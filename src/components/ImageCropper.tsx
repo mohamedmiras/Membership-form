@@ -77,35 +77,38 @@ export default function ImageCropper({ imageSrc, onCropComplete, onCancel }: Ima
   };
 
   const cropperContent = (
-    <div className="fixed inset-0 bg-black/90 z-[9999] flex flex-col backdrop-blur-sm">
-      {/* Cropper Container - flex-1 with min-h-0 prevents flexbox height bugs on iOS/Safari */}
-      <div className="relative flex-1 min-h-0 w-full">
-        <Cropper
-          image={imageSrc}
-          crop={crop}
-          zoom={zoom}
-          aspect={1}
-          cropShape="round"
-          showGrid={false}
-          objectFit="cover"
-          restrictPosition={false}
-          onCropChange={setCrop}
-          onCropComplete={handleCropComplete}
-          onZoomChange={setZoom}
-          style={{
-            containerStyle: {
-              backgroundColor: 'transparent'
-            },
-            mediaStyle: {
-              maxWidth: 'none',
-              maxHeight: 'none',
-            }
-          }}
-        />
-      </div>
-      
-      {/* Controls Container - shrink-0 ensures it takes its natural height without getting cut off */}
-      <div className="shrink-0 bg-white p-5 sm:p-6 flex flex-col gap-5 border-t shadow-2xl pb-safe">
+    <div className="fixed inset-0 bg-black/90 z-[9999] flex flex-col md:items-center md:justify-center md:p-8 backdrop-blur-sm">
+      {/* Inner container to constrain size on laptop */}
+      <div className="flex flex-col w-full h-full md:max-w-2xl md:max-h-[800px] bg-black md:rounded-3xl overflow-hidden md:shadow-2xl md:border md:border-gray-800">
+        
+        {/* Cropper Container - flex-1 with min-h-0 prevents flexbox height bugs on iOS/Safari */}
+        <div className="relative flex-1 min-h-0 w-full">
+          <Cropper
+            image={imageSrc}
+            crop={crop}
+            zoom={zoom}
+            aspect={1}
+            cropShape="round"
+            showGrid={false}
+            objectFit="cover"
+            restrictPosition={false}
+            onCropChange={setCrop}
+            onCropComplete={handleCropComplete}
+            onZoomChange={setZoom}
+            style={{
+              containerStyle: {
+                backgroundColor: 'transparent'
+              },
+              mediaStyle: {
+                maxWidth: 'none',
+                maxHeight: 'none',
+              }
+            }}
+          />
+        </div>
+        
+        {/* Controls Container - shrink-0 ensures it takes its natural height without getting cut off */}
+        <div className="shrink-0 bg-white p-5 sm:p-6 flex flex-col gap-5 border-t md:border-t-0 shadow-2xl pb-safe">
         <div className="w-full">
            <label className="text-sm font-medium text-gray-700 block mb-2 text-center">Drag to position, use slider to zoom</label>
            <input
@@ -133,6 +136,8 @@ export default function ImageCropper({ imageSrc, onCropComplete, onCancel }: Ima
           >
             <Check className="w-5 h-5" /> Confirm Crop
           </button>
+        </div>
+      </div>
         </div>
       </div>
     </div>
