@@ -156,7 +156,7 @@ export default function UserForm() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">House Name (Optional)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">House Name</label>
                 <input 
                   type="text" 
                   name="houseName"
@@ -207,7 +207,7 @@ export default function UserForm() {
                 ) : (
                   <div className="flex flex-col items-center space-y-2 text-gray-500">
                     <ImageIcon className="w-10 h-10 text-gray-400 mb-2" />
-                    <span className="text-sm font-medium text-gray-700">Upload Profile Photo (Optional)</span>
+                    <span className="text-sm font-medium text-gray-700">Upload Profile Photo</span>
                     <span className="text-xs">Square image recommended</span>
                   </div>
                 )}
