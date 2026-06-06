@@ -132,15 +132,15 @@ export const generatePoster = async (
 
         // Head (circle)
         ctx.beginPath();
-        const headRadius = radius * 0.32;
-        const headCenterY = centerY - radius * 0.12;
+        const headRadius = radius * 0.3;
+        const headCenterY = centerY - radius * 0.15;
         ctx.arc(centerX, headCenterY, headRadius, 0, Math.PI * 2);
         ctx.fill();
 
         // Shoulders/Body (half ellipse/arc)
         ctx.beginPath();
-        const bodyRadius = radius * 0.58;
-        const bodyCenterY = centerY + radius * 0.76;
+        const bodyRadius = radius * 0.65;
+        const bodyCenterY = centerY + radius * 0.7;
         ctx.arc(centerX, bodyCenterY, bodyRadius, Math.PI, 0);
         ctx.fill();
 
