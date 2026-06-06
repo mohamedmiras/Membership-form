@@ -79,7 +79,7 @@ export default function ImageCropper({ imageSrc, onCropComplete, onCancel }: Ima
   const cropperContent = (
     <div className="fixed inset-0 bg-black/90 z-[9999] flex flex-col md:items-center md:justify-center md:p-8 backdrop-blur-sm">
       {/* Inner container to constrain size on laptop */}
-      <div className="flex flex-col w-full h-full md:max-w-2xl md:max-h-[800px] bg-black md:rounded-3xl overflow-hidden md:shadow-2xl md:border md:border-gray-800">
+      <div className="flex flex-col w-full h-full md:w-[450px] md:h-[650px] bg-black md:rounded-3xl overflow-hidden md:shadow-2xl md:border md:border-gray-800">
         
         {/* Cropper Container - flex-1 with min-h-0 prevents flexbox height bugs on iOS/Safari */}
         <div className="relative flex-1 min-h-0 w-full">
