@@ -53,7 +53,7 @@ export const generatePoster = async (
         ctx.strokeStyle = '#FFFFFF'; 
         ctx.stroke();
         
-        // Elegant gold inner border for premium Islamic feel
+        // Elegant gold inner border for premium Muslimeen feel
         ctx.beginPath();
         const inset = canvas.width * 0.006; // Inset by half the white border width
         ctx.arc(centerX, centerY, radius - inset, 0, Math.PI * 2);

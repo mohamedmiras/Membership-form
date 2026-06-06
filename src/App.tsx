@@ -14,7 +14,7 @@ function Layout({ children }: { children: React.ReactNode }) {
             <span className="text-white font-bold font-serif text-lg">M</span>
           </div>
           <div>
-            <h1 className="text-xl font-bold text-primary-dark tracking-tight">Tharbiyathul Islam</h1>
+            <h1 className="text-xl font-bold text-primary-dark tracking-tight">Tharbiyathul Muslimeen</h1>
             <p className="text-xs text-text-muted uppercase tracking-wider font-semibold">Membership Portal</p>
           </div>
         </div>
@@ -33,7 +33,7 @@ function Layout({ children }: { children: React.ReactNode }) {
 
       {/* Footer */}
       <footer className="w-full py-6 text-center text-sm text-text-muted bg-white border-t border-[#E5E7EB]">
-        <p>&copy; {new Date().getFullYear()} Tharbiyathul Islam Madrasa. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} Tharbiyathul Muslimeen Madrasa. All rights reserved.</p>
       </footer>
     </div>
   );
