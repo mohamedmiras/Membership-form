@@ -1,5 +1,7 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import Cropper from 'react-easy-crop';
+import 'react-easy-crop/react-easy-crop.css';
 import { X, Check } from 'lucide-react';
 
 interface ImageCropperProps {
@@ -12,6 +14,14 @@ export default function ImageCropper({ imageSrc, onCropComplete, onCancel }: Ima
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+
+  useEffect(() => {
+    // Prevent scrolling of background page while cropping
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
 
   const handleCropComplete = useCallback((_croppedArea: any, croppedAreaPixels: any) => {
     setCroppedAreaPixels(croppedAreaPixels);
@@ -35,16 +45,17 @@ export default function ImageCropper({ imageSrc, onCropComplete, onCancel }: Ima
     canvas.width = pixelCrop.width;
     canvas.height = pixelCrop.height;
 
+    // Fill white background in case the user zooms out and leaves empty space
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw image using destination coordinates to handle negative source offsets safely
     ctx.drawImage(
       image,
-      pixelCrop.x,
-      pixelCrop.y,
-      pixelCrop.width,
-      pixelCrop.height,
-      0,
-      0,
-      pixelCrop.width,
-      pixelCrop.height
+      -pixelCrop.x,
+      -pixelCrop.y,
+      image.width,
+      image.height
     );
 
     return new Promise((resolve) => {
@@ -65,9 +76,10 @@ export default function ImageCropper({ imageSrc, onCropComplete, onCancel }: Ima
     }
   };
 
-  return (
-    <div className="fixed inset-0 bg-black/90 z-50 flex flex-col">
-      <div className="relative flex-1">
+  const cropperContent = (
+    <div className="fixed inset-0 bg-black/90 z-[9999] flex flex-col backdrop-blur-sm">
+      {/* Cropper Container - flex-1 with min-h-0 prevents flexbox height bugs on iOS/Safari */}
+      <div className="relative flex-1 min-h-0 w-full">
         <Cropper
           image={imageSrc}
           crop={crop}
@@ -75,14 +87,27 @@ export default function ImageCropper({ imageSrc, onCropComplete, onCancel }: Ima
           aspect={1}
           cropShape="round"
           showGrid={false}
+          objectFit="cover"
+          restrictPosition={false}
           onCropChange={setCrop}
           onCropComplete={handleCropComplete}
           onZoomChange={setZoom}
+          style={{
+            containerStyle: {
+              backgroundColor: 'transparent'
+            },
+            mediaStyle: {
+              maxWidth: 'none',
+              maxHeight: 'none',
+            }
+          }}
         />
       </div>
-      <div className="bg-white p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="w-full sm:w-1/2">
-           <label className="text-sm font-medium text-gray-700 block mb-2 text-center sm:text-left">Drag to position, use slider to zoom</label>
+      
+      {/* Controls Container - shrink-0 ensures it takes its natural height without getting cut off */}
+      <div className="shrink-0 bg-white p-5 sm:p-6 flex flex-col gap-5 border-t shadow-2xl pb-safe">
+        <div className="w-full">
+           <label className="text-sm font-medium text-gray-700 block mb-2 text-center">Drag to position, use slider to zoom</label>
            <input
              type="range"
              value={zoom}
@@ -93,18 +118,18 @@ export default function ImageCropper({ imageSrc, onCropComplete, onCancel }: Ima
              className="w-full accent-primary"
            />
         </div>
-        <div className="flex gap-4 w-full sm:w-auto">
+        <div className="flex gap-4 w-full">
           <button
             type="button"
             onClick={onCancel}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium text-gray-700 hover:bg-gray-100 transition-colors border"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-gray-700 hover:bg-gray-100 transition-colors border-2 border-gray-200"
           >
             <X className="w-5 h-5" /> Cancel
           </button>
           <button
             type="button"
             onClick={handleSave}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium text-white bg-primary hover:bg-primary-dark transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-white bg-primary hover:bg-primary-dark transition-colors shadow-lg"
           >
             <Check className="w-5 h-5" /> Confirm Crop
           </button>
@@ -112,4 +137,6 @@ export default function ImageCropper({ imageSrc, onCropComplete, onCancel }: Ima
       </div>
     </div>
   );
+
+  return createPortal(cropperContent, document.body);
 }

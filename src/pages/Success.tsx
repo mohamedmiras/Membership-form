@@ -61,7 +61,16 @@ export default function Success() {
           className="flex-1 py-4 px-6 rounded-xl bg-white border-2 border-primary text-primary hover:bg-primary-light hover:bg-opacity-10 font-bold text-lg flex items-center justify-center space-x-2 transition-all shadow-sm"
         >
           <PlusCircle className="w-5 h-5" />
-          <span>Generate Another</span>
+          <span>New Poster</span>
+        </Link>
+      </div>
+
+      <div className="mt-8 pt-6 border-t border-gray-100 flex justify-center">
+        <Link 
+          to="/admin" 
+          className="text-primary hover:text-primary-dark font-bold underline underline-offset-4 flex items-center gap-1"
+        >
+          Go to Admin Dashboard to view your submission →
         </Link>
       </div>
     </div>

@@ -3,9 +3,9 @@ export interface Submission {
   fullName: string;
   houseName: string;
   phoneNumber: string;
-  profilePhotoDataUrl: string;
-  paymentScreenshotDataUrl: string;
-  posterDataUrl: string;
+  profilePhotoUrl?: string;
+  paymentScreenshotUrl: string;
+  posterUrl: string;
   status: 'pending' | 'approved' | 'rejected';
   createdAt: number;
 }

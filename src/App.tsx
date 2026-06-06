@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import UserForm from './pages/UserForm';
 import Success from './pages/Success';
 import AdminDashboard from './pages/AdminDashboard';
@@ -18,10 +18,10 @@ function Layout({ children }: { children: React.ReactNode }) {
             <p className="text-xs text-text-muted uppercase tracking-wider font-semibold">Membership Portal</p>
           </div>
         </div>
-        <a href="/admin" className="text-text-muted hover:text-primary transition-colors flex items-center gap-1 text-sm font-medium">
-          <ShieldCheck size={16} />
-          <span className="hidden sm:inline">Admin</span>
-        </a>
+        <Link to="/admin" className="px-3 py-2 bg-gray-100 rounded-lg text-gray-600 hover:bg-gray-200 hover:text-primary transition-colors flex items-center gap-2 text-sm font-bold">
+          <ShieldCheck size={18} />
+          <span className="hidden sm:inline">Admin Dashboard</span>
+        </Link>
       </header>
 
       {/* Main Content */}

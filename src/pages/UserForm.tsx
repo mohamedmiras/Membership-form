@@ -4,6 +4,7 @@ import { UploadCloud, Image as ImageIcon, CheckCircle, Loader2 } from 'lucide-re
 import { generatePoster, fileToDataUrl } from '../utils/posterGenerator';
 import { saveSubmission } from '../utils/storage';
 import ImageCropper from '../components/ImageCropper';
+import heic2any from 'heic2any';
 
 export default function UserForm() {
   const navigate = useNavigate();
@@ -28,17 +29,30 @@ export default function UserForm() {
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'photo' | 'payment') => {
-    const file = e.target.files?.[0];
+    let file = e.target.files?.[0];
     if (file) {
-      if (type === 'photo') {
-        try {
-          const dataUrl = await fileToDataUrl(file);
-          setPhotoToCrop(dataUrl);
-        } catch (err) {
-          setError('Failed to load image for cropping');
+      try {
+        // Convert HEIC/HEIF (iPhone photos) to JPEG to prevent black screen/rendering issues
+        const isHeic = file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
+        if (isHeic) {
+          const convertedBlob = await heic2any({
+            blob: file,
+            toType: 'image/jpeg',
+            quality: 0.8
+          });
+          const blobToUse = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
+          file = new File([blobToUse], file.name.replace(/\.heic$/i, '.jpg').replace(/\.heif$/i, '.jpg'), { type: 'image/jpeg' });
         }
-      } else {
-        setPaymentScreenshot(file);
+
+        if (type === 'photo') {
+          // Use Object URL for cropper preview (faster, uses less memory than base64)
+          setPhotoToCrop(URL.createObjectURL(file));
+        } else {
+          setPaymentScreenshot(file);
+        }
+      } catch (err) {
+        console.error("File processing error:", err);
+        setError(`Failed to process the ${type === 'photo' ? 'profile photo' : 'payment screenshot'}. Please try a standard JPG/PNG image.`);
       }
     }
   };
@@ -53,17 +67,16 @@ export default function UserForm() {
     e.preventDefault();
     setError('');
 
-    if (!formData.fullName || !formData.houseName || !profilePhoto || !paymentScreenshot) {
-      setError('Please fill in all required fields and upload both images.');
+    if (!formData.fullName || !formData.houseName || !paymentScreenshot) {
+      setError('Please fill in all required fields and upload the payment screenshot.');
       return;
     }
 
     setIsGenerating(true);
 
     try {
-      // 1. Convert files to data URLs
-      const photoDataUrl = await fileToDataUrl(profilePhoto);
-      const paymentDataUrl = await fileToDataUrl(paymentScreenshot);
+      // 1. Convert profile photo to data URL for the poster generator
+      const photoDataUrl = profilePhoto ? await fileToDataUrl(profilePhoto) : null;
 
       // 2. Load template image (Assuming we put it in public folder as template.png)
       // Since it's public, we just use '/template.png'
@@ -74,24 +87,20 @@ export default function UserForm() {
         templateSrc,
         photoDataUrl,
         formData.fullName,
-        formData.houseName,
-        formData.phoneNumber
+        formData.houseName
       );
 
-      // 4. Save Submission
-      const id = Date.now().toString() + Math.random().toString(36).substring(2, 9);
+      // 4. Save Submission directly to Firebase
+      // Firebase will generate the real document ID, so we don't need to create one here
       await saveSubmission({
-        id,
         ...formData,
-        profilePhotoDataUrl: photoDataUrl,
-        paymentScreenshotDataUrl: paymentDataUrl,
+        profilePhotoFile: profilePhoto,
+        paymentScreenshotFile: paymentScreenshot,
         posterDataUrl,
-        status: 'pending',
-        createdAt: Date.now()
       });
 
       // 5. Navigate to Success
-      navigate('/success', { state: { posterDataUrl, id } });
+      navigate('/success', { state: { posterDataUrl } });
 
     } catch (err) {
       console.error(err);
@@ -102,13 +111,7 @@ export default function UserForm() {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-[#f0eee9]">
-      <div className="bg-primary px-8 py-10 text-center relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')]"></div>
-        <h2 className="text-3xl md:text-4xl font-serif font-bold text-white relative z-10 mb-2">Join Our Community</h2>
-        <p className="text-primary-light text-opacity-90 relative z-10 font-medium">Generate your official membership poster instantly</p>
-      </div>
-
+    <>
       {photoToCrop && (
         <ImageCropper 
           imageSrc={photoToCrop}
@@ -119,6 +122,12 @@ export default function UserForm() {
           }}
         />
       )}
+      <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-[#f0eee9]">
+        <div className="bg-primary px-8 py-10 text-center relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')]"></div>
+          <h2 className="text-3xl md:text-4xl font-serif font-bold text-white relative z-10 mb-2">Join Our Community</h2>
+          <p className="text-primary-light text-opacity-90 relative z-10 font-medium">Generate your official membership poster instantly</p>
+        </div>
 
       <form onSubmit={handleSubmit} className="p-8 md:p-10 space-y-8">
         {error && (
@@ -185,7 +194,7 @@ export default function UserForm() {
               >
                 <input 
                   type="file" 
-                  accept="image/*" 
+                  accept="image/jpeg, image/png, image/webp" 
                   className="hidden" 
                   ref={photoInputRef}
                   onChange={(e) => handleFileChange(e, 'photo')}
@@ -199,7 +208,7 @@ export default function UserForm() {
                 ) : (
                   <div className="flex flex-col items-center space-y-2 text-gray-500">
                     <ImageIcon className="w-10 h-10 text-gray-400 mb-2" />
-                    <span className="text-sm font-medium text-gray-700">Upload Profile Photo *</span>
+                    <span className="text-sm font-medium text-gray-700">Upload Profile Photo (Optional)</span>
                     <span className="text-xs">Square image recommended</span>
                   </div>
                 )}
@@ -212,7 +221,7 @@ export default function UserForm() {
               >
                 <input 
                   type="file" 
-                  accept="image/*" 
+                  accept="image/jpeg, image/png, image/webp" 
                   className="hidden" 
                   ref={paymentInputRef}
                   onChange={(e) => handleFileChange(e, 'payment')}
@@ -255,5 +264,6 @@ export default function UserForm() {
         </div>
       </form>
     </div>
+    </>
   );
 }

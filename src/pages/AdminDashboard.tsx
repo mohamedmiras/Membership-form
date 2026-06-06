@@ -78,117 +78,111 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-[#f0eee9] w-full max-w-6xl mx-auto flex flex-col md:flex-row h-[80vh]">
+    <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-[#f0eee9] w-full max-w-3xl mx-auto my-10">
       
-      {/* Sidebar / List View */}
-      <div className="w-full md:w-1/3 border-r border-gray-200 bg-gray-50 flex flex-col h-full overflow-hidden">
-        <div className="p-4 border-b border-gray-200 bg-white">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold font-serif text-primary-dark">Dashboard</h2>
-            <button 
-              onClick={handleApproveAll}
-              className="text-xs font-bold bg-green-500 text-white px-3 py-1.5 rounded-lg hover:bg-green-600 transition-colors flex items-center gap-1"
-            >
-              <CheckCircle className="w-4 h-4" /> Approve All
-            </button>
-          </div>
-          <div className="relative">
-            <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input 
-              type="text" 
-              placeholder="Search by name, house..." 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none"
-            />
-          </div>
+      {/* Header */}
+      <div className="p-6 border-b border-gray-200 bg-white">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold font-serif text-primary-dark">Admin Dashboard</h2>
+          <button 
+            onClick={handleApproveAll}
+            className="text-sm font-bold bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2"
+          >
+            <CheckCircle className="w-5 h-5" /> Approve All Pending
+          </button>
         </div>
-
-        <div className="flex-1 overflow-y-auto">
-          {filteredSubs.length === 0 ? (
-            <div className="p-8 text-center text-gray-500 font-medium">No submissions found.</div>
-          ) : (
-            <div className="divide-y divide-gray-200">
-              {filteredSubs.map(sub => (
-                <div 
-                  key={sub.id} 
-                  onClick={() => setSelectedSub(sub)}
-                  className={`p-4 cursor-pointer hover:bg-primary hover:bg-opacity-5 transition-colors ${selectedSub?.id === sub.id ? 'bg-primary bg-opacity-10 border-l-4 border-primary' : 'border-l-4 border-transparent'}`}
-                >
-                  <div className="flex justify-between items-start mb-1">
-                    <h3 className="font-bold text-gray-800">{sub.fullName}</h3>
-                    <span className={`text-xs px-2 py-1 rounded-full font-semibold uppercase ${
-                      sub.status === 'approved' ? 'bg-green-100 text-green-700' :
-                      sub.status === 'rejected' ? 'bg-red-100 text-red-700' :
-                      'bg-yellow-100 text-yellow-700'
-                    }`}>
-                      {sub.status}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-500">{sub.houseName}</p>
-                  <p className="text-xs text-gray-400 mt-2">{new Date(sub.createdAt).toLocaleString()}</p>
-                </div>
-              ))}
-            </div>
-          )}
+        <div className="relative">
+          <Search className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <input 
+            type="text" 
+            placeholder="Search by name, house name..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none"
+          />
         </div>
       </div>
 
-      {/* Main Detail View */}
-      <div className="w-full md:w-2/3 bg-white flex flex-col h-full overflow-y-auto">
-        {selectedSub ? (
-          <div className="p-6 md:p-8">
-            <div className="flex justify-between items-center mb-6 border-b pb-4">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900">{selectedSub.fullName}</h2>
-                <p className="text-gray-500">{selectedSub.houseName} • {selectedSub.phoneNumber || 'No phone'}</p>
-              </div>
-              <div className="flex space-x-2">
-                {selectedSub.status !== 'approved' && (
-                  <button 
-                    onClick={() => handleStatusChange(selectedSub.id, 'approved')}
-                    className="p-2 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 transition-colors"
-                    title="Approve"
-                  >
-                    <CheckCircle className="w-6 h-6" />
-                  </button>
-                )}
-                {selectedSub.status !== 'rejected' && (
-                  <button 
-                    onClick={() => handleStatusChange(selectedSub.id, 'rejected')}
-                    className="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
-                    title="Reject"
-                  >
-                    <XCircle className="w-6 h-6" />
-                  </button>
-                )}
-                <button 
-                  onClick={() => handleDelete(selectedSub.id)}
-                  className="p-2 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-200 transition-colors"
-                  title="Delete"
-                >
-                  <Trash2 className="w-6 h-6" />
-                </button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 gap-8">
-              {/* Payment Screenshot */}
-              <div className="space-y-3">
-                <h3 className="font-semibold text-gray-800 flex items-center gap-2">
-                  <Eye className="w-5 h-5 text-primary" /> Payment Screenshot
-                </h3>
-                <div className="border rounded-xl overflow-hidden bg-gray-50 h-[500px] flex items-center justify-center">
-                  <img src={selectedSub.paymentScreenshotDataUrl} alt="Payment" className="w-full h-full object-contain" />
-                </div>
-              </div>
-            </div>
-
+      {/* List View */}
+      <div className="flex-1 overflow-y-auto max-h-[70vh]">
+        {filteredSubs.length === 0 ? (
+          <div className="p-12 text-center text-gray-500 font-medium">
+            <Search className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+            No submissions found.
           </div>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center text-gray-400 p-8 text-center">
-            <Search className="w-16 h-16 mb-4 text-gray-300" />
-            <p className="text-xl font-medium text-gray-500">Select a submission to view details</p>
+          <div className="divide-y divide-gray-100">
+            {filteredSubs.map(sub => {
+              const isExpanded = selectedSub?.id === sub.id;
+              
+              return (
+                <div key={sub.id} className="flex flex-col">
+                  {/* List Item Header (Clickable) */}
+                  <div 
+                    onClick={() => setSelectedSub(isExpanded ? null : sub)}
+                    className={`p-6 cursor-pointer hover:bg-gray-50 transition-colors flex justify-between items-center ${isExpanded ? 'bg-primary bg-opacity-5' : ''}`}
+                  >
+                    <div>
+                      <div className="flex items-center gap-3 mb-1">
+                        <h3 className="text-lg font-bold text-gray-900">{sub.fullName}</h3>
+                        <span className={`text-xs px-2 py-1 rounded-md font-semibold uppercase tracking-wider ${
+                          sub.status === 'approved' ? 'bg-green-100 text-green-700' :
+                          sub.status === 'rejected' ? 'bg-red-100 text-red-700' :
+                          'bg-yellow-100 text-yellow-700'
+                        }`}>
+                          {sub.status}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600 font-medium">{sub.houseName}</p>
+                      <p className="text-xs text-gray-400 mt-1">{new Date(sub.createdAt).toLocaleString()}</p>
+                    </div>
+                  </div>
+
+                  {/* Accordion Dropdown Content */}
+                  {isExpanded && (
+                    <div className="p-6 bg-gray-50 border-t border-gray-100">
+                      
+                      {/* Action Buttons */}
+                      <div className="flex items-center gap-3 mb-6">
+                        {sub.status !== 'approved' && (
+                          <button 
+                            onClick={() => handleStatusChange(sub.id, 'approved')}
+                            className="flex-1 py-2 rounded-lg bg-green-500 text-white font-bold hover:bg-green-600 transition-colors flex justify-center items-center gap-2"
+                          >
+                            <CheckCircle className="w-5 h-5" /> Approve
+                          </button>
+                        )}
+                        {sub.status !== 'rejected' && (
+                          <button 
+                            onClick={() => handleStatusChange(sub.id, 'rejected')}
+                            className="flex-1 py-2 rounded-lg bg-red-500 text-white font-bold hover:bg-red-600 transition-colors flex justify-center items-center gap-2"
+                          >
+                            <XCircle className="w-5 h-5" /> Reject
+                          </button>
+                        )}
+                        <button 
+                          onClick={() => handleDelete(sub.id)}
+                          className="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-bold hover:bg-gray-300 transition-colors flex justify-center items-center gap-2"
+                        >
+                          <Trash2 className="w-5 h-5" /> Delete
+                        </button>
+                      </div>
+
+                      {/* Payment Screenshot Only */}
+                      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                        <h3 className="font-semibold text-gray-800 flex items-center gap-2 mb-3">
+                          <Eye className="w-5 h-5 text-primary" /> Payment Screenshot
+                        </h3>
+                        <div className="rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+                          <img src={sub.paymentScreenshotUrl} alt="Payment" className="max-w-full max-h-[500px] object-contain" />
+                        </div>
+                      </div>
+
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
