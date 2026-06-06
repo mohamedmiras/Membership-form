@@ -67,8 +67,8 @@ export default function UserForm() {
     e.preventDefault();
     setError('');
 
-    if (!formData.fullName || !formData.houseName || !paymentScreenshot) {
-      setError('Please fill in all required fields and upload the payment screenshot.');
+    if (!formData.fullName || !paymentScreenshot) {
+      setError('Please fill in your name and upload the payment screenshot.');
       return;
     }
 
@@ -156,7 +156,7 @@ export default function UserForm() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">House Name *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">House Name (Optional)</label>
                 <input 
                   type="text" 
                   name="houseName"
@@ -164,7 +164,6 @@ export default function UserForm() {
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary transition-all bg-gray-50 outline-none"
                   placeholder="e.g. Darul Falah"
-                  required
                 />
               </div>
 
