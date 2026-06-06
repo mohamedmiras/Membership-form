@@ -78,7 +78,7 @@ export const getSubmissions = async (): Promise<Submission[]> => {
   }
 };
 
-export const updateSubmissionStatus = async (id: string, status: 'approved' | 'rejected'): Promise<void> => {
+export const updateSubmissionStatus = async (id: string, status: 'pending' | 'approved' | 'rejected'): Promise<void> => {
   try {
     const docRef = doc(db, 'submissions', id);
     await updateDoc(docRef, { status });

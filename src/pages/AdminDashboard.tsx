@@ -21,7 +21,7 @@ export default function AdminDashboard() {
     loadSubmissions();
   }, []);
 
-  const handleStatusChange = async (id: string, status: 'approved' | 'rejected') => {
+  const handleStatusChange = async (id: string, status: 'pending' | 'approved' | 'rejected') => {
     await updateSubmissionStatus(id, status);
     loadSubmissions();
     if (selectedSub?.id === id) {
@@ -93,9 +93,9 @@ export default function AdminDashboard() {
           </div>
           <button 
             onClick={handleApproveAll}
-            className="text-sm font-bold bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2"
+            className="text-xs sm:text-sm font-bold bg-green-500 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center gap-1 sm:gap-2 whitespace-nowrap"
           >
-            <CheckCircle className="w-5 h-5" /> Approve All Pending
+            <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" /> <span className="hidden sm:inline">Approve All Pending</span><span className="sm:hidden">Approve All</span>
           </button>
         </div>
         <div className="relative">
@@ -150,28 +150,35 @@ export default function AdminDashboard() {
                     <div className="p-6 bg-gray-50 border-t border-gray-100">
                       
                       {/* Action Buttons */}
-                      <div className="flex items-center gap-3 mb-6">
-                        {sub.status !== 'approved' && (
+                      <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 mb-6">
+                        {sub.status === 'pending' ? (
+                          <>
+                            <button 
+                              onClick={() => handleStatusChange(sub.id, 'approved')}
+                              className="flex-1 py-2 px-2 sm:px-4 rounded-lg bg-green-500 text-white text-sm font-bold hover:bg-green-600 transition-colors flex justify-center items-center gap-1 sm:gap-2"
+                            >
+                              <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" /> Approve
+                            </button>
+                            <button 
+                              onClick={() => handleStatusChange(sub.id, 'rejected')}
+                              className="flex-1 py-2 px-2 sm:px-4 rounded-lg bg-red-500 text-white text-sm font-bold hover:bg-red-600 transition-colors flex justify-center items-center gap-1 sm:gap-2"
+                            >
+                              <XCircle className="w-4 h-4 sm:w-5 sm:h-5" /> Reject
+                            </button>
+                          </>
+                        ) : (
                           <button 
-                            onClick={() => handleStatusChange(sub.id, 'approved')}
-                            className="flex-1 py-2 rounded-lg bg-green-500 text-white font-bold hover:bg-green-600 transition-colors flex justify-center items-center gap-2"
+                            onClick={() => handleStatusChange(sub.id, 'pending')}
+                            className="flex-1 py-2 px-2 sm:px-4 rounded-lg bg-yellow-500 text-white text-sm font-bold hover:bg-yellow-600 transition-colors flex justify-center items-center gap-1 sm:gap-2"
                           >
-                            <CheckCircle className="w-5 h-5" /> Approve
-                          </button>
-                        )}
-                        {sub.status !== 'rejected' && (
-                          <button 
-                            onClick={() => handleStatusChange(sub.id, 'rejected')}
-                            className="flex-1 py-2 rounded-lg bg-red-500 text-white font-bold hover:bg-red-600 transition-colors flex justify-center items-center gap-2"
-                          >
-                            <XCircle className="w-5 h-5" /> Reject
+                            <Eye className="w-4 h-4 sm:w-5 sm:h-5" /> Edit Status
                           </button>
                         )}
                         <button 
                           onClick={() => handleDelete(sub.id)}
-                          className="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-bold hover:bg-gray-300 transition-colors flex justify-center items-center gap-2"
+                          className="flex-none px-3 sm:px-4 py-2 rounded-lg bg-gray-200 text-gray-700 text-sm font-bold hover:bg-gray-300 transition-colors flex justify-center items-center gap-1 sm:gap-2"
                         >
-                          <Trash2 className="w-5 h-5" /> Delete
+                          <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" /> Delete
                         </button>
                       </div>
 

@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import Cropper, { Area } from 'react-easy-crop';
+import Cropper, { type Area } from 'react-easy-crop';
 import 'react-easy-crop/react-easy-crop.css';
 import { X, Check } from 'lucide-react';
 
@@ -66,6 +66,7 @@ export default function ImageCropper({ imageSrc, onCropComplete, onCancel }: Ima
   };
 
   const handleSave = async () => {
+    if (!croppedAreaPixels) return;
     try {
       const croppedImageBlob = await getCroppedImg(imageSrc, croppedAreaPixels);
       if (croppedImageBlob) {
