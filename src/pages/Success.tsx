@@ -31,13 +31,13 @@ export default function Success() {
   return (
     <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-[#f0eee9] p-8 md:p-12 text-center max-w-2xl mx-auto">
       <div className="flex justify-center mb-6">
-        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
+        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center animate-success-pop">
           <CheckCircle className="w-12 h-12 text-primary" />
         </div>
       </div>
       
-      <h2 className="text-3xl font-serif font-bold text-gray-900 mb-2">Your Poster is Ready!</h2>
-      <p className="text-gray-500 mb-8 font-medium">Your membership details have been successfully submitted and your premium poster has been generated.</p>
+      <h2 className="text-3xl font-serif font-bold text-gray-900 mb-2 animate-slide-up delay-100">Your Poster is Ready!</h2>
+      <p className="text-gray-500 mb-8 font-medium animate-slide-up delay-200">Your membership details have been successfully submitted and your premium poster has been generated.</p>
 
       <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-8 flex justify-center shadow-inner">
         <img 

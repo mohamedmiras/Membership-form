@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { getSubmissions, updateSubmissionStatus, deleteSubmission } from '../utils/storage';
 import type { Submission } from '../types';
-import { Search, CheckCircle, XCircle, Trash2, Eye } from 'lucide-react';
+import { Search, CheckCircle, XCircle, Trash2, Eye, ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -83,7 +84,12 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="p-6 border-b border-gray-200 bg-white">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold font-serif text-primary-dark">Admin Dashboard</h2>
+          <div className="flex items-center gap-3">
+            <Link to="/" className="p-2 -ml-2 rounded-full hover:bg-gray-100 text-gray-500 transition-colors">
+              <ArrowLeft className="w-6 h-6" />
+            </Link>
+            <h2 className="text-2xl font-bold font-serif text-primary-dark">Admin Dashboard</h2>
+          </div>
           <button 
             onClick={handleApproveAll}
             className="text-sm font-bold bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2"
