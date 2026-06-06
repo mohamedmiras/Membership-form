@@ -33,7 +33,8 @@ function Layout({ children }: { children: React.ReactNode }) {
 
       {/* Footer */}
       <footer className="w-full py-6 text-center text-sm text-text-muted bg-white border-t border-[#E5E7EB]">
-        <p>&copy; {new Date().getFullYear()} Tharbiyathul Muslimeen Madrasa. All rights reserved.</p>
+        <p className="font-medium text-gray-800 mb-1">Tharbiyathul Muslimeen Association</p>
+        <p>&copy; 2026 All rights reserved.</p>
       </footer>
     </div>
   );
