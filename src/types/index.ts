@@ -5,7 +5,7 @@ export interface Submission {
   phoneNumber: string;
   profilePhotoUrl?: string;
   paymentScreenshotUrl: string;
-  posterUrl: string;
+  posterUrl?: string;
   status: 'pending' | 'approved' | 'rejected';
   createdAt: number;
 }
