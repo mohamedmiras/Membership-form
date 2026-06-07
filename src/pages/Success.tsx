@@ -13,14 +13,30 @@ export default function Success() {
     }
   }, [posterDataUrl, navigate]);
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!posterDataUrl) return;
-    const link = document.createElement('a');
-    link.href = posterDataUrl;
-    link.download = `Membership_Poster_${Date.now()}.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    try {
+      const response = await fetch(posterDataUrl);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = `Membership_Poster_${Date.now()}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+    } catch (err) {
+      // Direct base64 fallback
+      const link = document.createElement('a');
+      link.href = posterDataUrl;
+      link.download = `Membership_Poster_${Date.now()}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
   if (!posterDataUrl) return null;
@@ -61,6 +77,10 @@ export default function Success() {
           <span>New Poster</span>
         </Link>
       </div>
+
+      <p className="text-xs text-gray-400 mt-4">
+        Tip: If the download button doesn't start, tap and hold (long press) the poster image above and choose "Save Image" or "Download Image".
+      </p>
 
       <div className="mt-8 pt-6 border-t border-gray-100 flex justify-center">
         <Link 

@@ -141,6 +141,9 @@ export default function AdminDashboard() {
                         </span>
                       </div>
                       <p className="text-sm text-gray-600 font-medium">{sub.houseName}</p>
+                      <p className="text-xs text-gray-500 mt-1 bg-gray-100 inline-block px-2 py-0.5 rounded border border-gray-200 font-mono">
+                        Order ID: {sub.orderId || 'N/A'}
+                      </p>
                       <p className="text-xs text-gray-400 mt-1">{new Date(sub.createdAt).toLocaleString()}</p>
                     </div>
                   </div>

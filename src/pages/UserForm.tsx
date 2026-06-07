@@ -1,10 +1,15 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UploadCloud, Image as ImageIcon, CheckCircle, Loader2 } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
 import { generatePoster, fileToDataUrl } from '../utils/posterGenerator';
 import { saveSubmission } from '../utils/storage';
 import ImageCropper from '../components/ImageCropper';
 import heic2any from 'heic2any';
+
+const PAYMENT_AMOUNT = '300'; // Easily configurable amount
+const UPI_ID = 'mirasmt.mt@okicici'; // Replace with your actual UPI ID
+const UPI_NAME = 'Miras MT'; // Updated Name
 
 export default function UserForm() {
   const navigate = useNavigate();
@@ -19,6 +24,12 @@ export default function UserForm() {
   const [photoToCrop, setPhotoToCrop] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState('');
+  const [orderId, setOrderId] = useState('');
+
+  useEffect(() => {
+    const uniqueId = 'ORD-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+    setOrderId(uniqueId);
+  }, []);
 
   const photoInputRef = useRef<HTMLInputElement>(null);
   const paymentInputRef = useRef<HTMLInputElement>(null);
@@ -31,6 +42,19 @@ export default function UserForm() {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'photo' | 'payment') => {
     let file = e.target.files?.[0];
     if (file) {
+      if (type === 'payment') {
+        const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        if (!validTypes.includes(file.type)) {
+          setError('Payment screenshot must be a JPG, PNG, or WEBP image.');
+          e.target.value = '';
+          return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+          setError('Payment screenshot must be less than 5MB.');
+          e.target.value = '';
+          return;
+        }
+      }
       try {
         // Convert HEIC/HEIF (iPhone photos) to JPEG to prevent black screen/rendering issues
         const isHeic = file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
@@ -94,6 +118,7 @@ export default function UserForm() {
       // Firebase will generate the real document ID, so we don't need to create one here
       await saveSubmission({
         ...formData,
+        orderId,
         profilePhotoFile: profilePhoto,
         paymentScreenshotFile: paymentScreenshot,
         posterDataUrl,
@@ -181,9 +206,9 @@ export default function UserForm() {
             </div>
           </div>
 
-          {/* Uploads */}
+          {/* Uploads & Profile */}
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-primary-dark border-b pb-2">Required Documents</h3>
+            <h3 className="text-lg font-semibold text-primary-dark border-b pb-2">Profile Photo</h3>
 
             <div className="space-y-5">
               {/* Profile Photo */}
@@ -207,38 +232,80 @@ export default function UserForm() {
                 ) : (
                   <div className="flex flex-col items-center space-y-2 text-gray-500">
                     <ImageIcon className="w-10 h-10 text-gray-400 mb-2" />
-                    <span className="text-sm font-medium text-gray-700">Upload Profile Photo</span>
+                    <span className="text-sm font-medium text-gray-700">Upload Profile Photo *</span>
                     <span className="text-xs">Square image recommended</span>
                   </div>
                 )}
               </div>
+            </div>
+          </div>
+        </div>
 
-              {/* Payment Screenshot */}
-              <div 
-                className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${paymentScreenshot ? 'border-primary bg-primary/5' : 'border-gray-300 hover:border-primary hover:bg-gray-50'}`}
-                onClick={() => paymentInputRef.current?.click()}
-              >
-                <input 
-                  type="file" 
-                  accept="image/jpeg, image/png, image/webp" 
-                  className="hidden" 
-                  ref={paymentInputRef}
-                  onChange={(e) => handleFileChange(e, 'payment')}
-                />
-                {paymentScreenshot ? (
-                  <div className="flex flex-col items-center space-y-2">
-                    <CheckCircle className="text-primary w-8 h-8" />
-                    <span className="text-sm font-medium text-gray-700">{paymentScreenshot.name}</span>
-                    <span className="text-xs text-primary font-semibold">Change Screenshot</span>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center space-y-2 text-gray-500">
-                    <UploadCloud className="w-10 h-10 text-gray-400 mb-2" />
-                    <span className="text-sm font-medium text-gray-700">Upload Payment Screenshot *</span>
-                    <span className="text-xs">Clear image of the transaction</span>
-                  </div>
-                )}
+        {/* Payment Section */}
+        <div className="space-y-6 border-t pt-8">
+          <h3 className="text-lg font-semibold text-primary-dark border-b pb-2">Secure Payment</h3>
+          
+          <div className="bg-gray-50 p-6 md:p-8 rounded-2xl border border-gray-200 shadow-inner flex flex-col md:flex-row items-center gap-8 justify-between">
+            <div className="flex-1 w-full text-center md:text-left space-y-4">
+              <div>
+                <p className="text-sm text-gray-500 font-medium uppercase tracking-wider mb-1">Registration Fee</p>
+                <h4 className="text-4xl font-bold text-gray-900">₹{PAYMENT_AMOUNT}</h4>
+                <p className="text-sm text-gray-500 mt-2 font-mono bg-white inline-block px-3 py-1 rounded-md border border-gray-100 shadow-sm">Order ID: {orderId}</p>
               </div>
+              <p className="text-gray-600 text-sm">Pay securely using Google Pay. Scan the QR code or tap the button below if you are on a mobile device.</p>
+              <p className="text-sm font-medium text-gray-600 mt-1">GPay Number: <span className="font-bold text-gray-900">9447397075</span></p>
+              
+              <div className="pt-4 w-full md:w-auto">
+                <a 
+                  href={`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${PAYMENT_AMOUNT}&cu=INR&tn=${orderId}`}
+                  onClick={(e) => {
+                    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                    if (!isMobile) {
+                      e.preventDefault();
+                      alert("UPI apps cannot be opened on desktop. Please scan the QR Code on the right with your phone's GPay or UPI app to pay.");
+                    }
+                  }}
+                  className="w-full md:w-auto px-6 py-4 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 transition-colors flex items-center justify-center gap-3 shadow-md"
+                >
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg" alt="GPay" className="h-6 filter brightness-0 invert" />
+                  Pay with GPay
+                </a>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center justify-center space-y-3 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+              <QRCodeSVG value={`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${PAYMENT_AMOUNT}&cu=INR&tn=${orderId}`} size={160} />
+              <p className="text-sm font-bold text-gray-600">Scan to Pay</p>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <p className="text-sm font-medium text-gray-700">Upload Payment Proof *</p>
+            {/* Payment Screenshot */}
+            <div 
+              className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${paymentScreenshot ? 'border-green-500 bg-green-50' : 'border-gray-300 hover:border-primary hover:bg-gray-50'}`}
+              onClick={() => paymentInputRef.current?.click()}
+            >
+              <input 
+                type="file" 
+                accept="image/jpeg, image/png, image/webp" 
+                className="hidden" 
+                ref={paymentInputRef}
+                onChange={(e) => handleFileChange(e, 'payment')}
+              />
+              {paymentScreenshot ? (
+                <div className="flex flex-col items-center space-y-2">
+                  <CheckCircle className="text-green-500 w-8 h-8" />
+                  <span className="text-sm font-medium text-gray-700">{paymentScreenshot.name}</span>
+                  <span className="text-xs text-green-600 font-semibold">Change Screenshot</span>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center space-y-2 text-gray-500">
+                  <UploadCloud className="w-10 h-10 text-gray-400 mb-2" />
+                  <span className="text-sm font-medium text-gray-700">Upload Payment Screenshot</span>
+                  <span className="text-xs">Max 5MB (JPG, PNG, WEBP)</span>
+                </div>
+              )}
             </div>
           </div>
         </div>

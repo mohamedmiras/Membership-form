@@ -88,6 +88,8 @@ export default function ImageCropper({ imageSrc, onCropComplete, onCancel }: Ima
             image={imageSrc}
             crop={crop}
             zoom={zoom}
+            minZoom={0.3}
+            maxZoom={3}
             aspect={1}
             cropShape="round"
             showGrid={false}
@@ -115,9 +117,9 @@ export default function ImageCropper({ imageSrc, onCropComplete, onCancel }: Ima
            <input
              type="range"
              value={zoom}
-             min={1}
+             min={0.3}
              max={3}
-             step={0.1}
+             step={0.05}
              onChange={(e) => setZoom(Number(e.target.value))}
              className="w-full accent-primary"
            />

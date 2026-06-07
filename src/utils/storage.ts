@@ -8,6 +8,7 @@ const CLOUDINARY_UPLOAD_PRESET = 'memebrship_screenshots';
 
 // We create an interface for what UserForm sends us, before it becomes a 'Submission'
 export interface SubmissionPayload {
+  orderId: string;
   fullName: string;
   houseName: string;
   phoneNumber: string;
@@ -48,6 +49,7 @@ export const saveSubmission = async (payload: SubmissionPayload): Promise<void> 
 
     // 2. Save to Firestore
     const submissionData: Omit<Submission, 'id'> = {
+      orderId: payload.orderId,
       fullName: payload.fullName,
       houseName: payload.houseName,
       phoneNumber: payload.phoneNumber,
