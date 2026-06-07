@@ -5,7 +5,12 @@ import { CheckCircle, Download, PlusCircle } from 'lucide-react';
 export default function Success() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [posterDataUrl] = useState<string | null>(location.state?.posterDataUrl || null);
+  const [posterDataUrl] = useState<string | null>(() => {
+    // Try to get from router state first
+    if (location.state?.posterDataUrl) return location.state.posterDataUrl;
+    // Fallback to sessionStorage for page reloads
+    return sessionStorage.getItem('posterDataUrl');
+  });
 
   useEffect(() => {
     if (!posterDataUrl) {

@@ -124,7 +124,8 @@ export default function UserForm() {
         posterDataUrl,
       });
 
-      // 5. Navigate to Success
+      // 5. Save to sessionStorage and Navigate to Success
+      sessionStorage.setItem('posterDataUrl', posterDataUrl);
       navigate('/success', { state: { posterDataUrl } });
 
     } catch (err) {

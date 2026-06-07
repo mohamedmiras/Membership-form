@@ -57,6 +57,7 @@ export default function AdminDashboard() {
   );
 
   if (!isAuthenticated) {
+    const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123'; // Fallback for dev if not set
     return (
       <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-auto text-center border border-[#f0eee9] mt-20">
         <h2 className="text-2xl font-bold text-primary-dark mb-4">Admin Access Required</h2>
@@ -66,11 +67,11 @@ export default function AdminDashboard() {
           placeholder="Enter password" 
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          onKeyDown={(e) => { if (e.key === 'Enter' && password === 'admin123') setIsAuthenticated(true); }}
+          onKeyDown={(e) => { if (e.key === 'Enter' && password === adminPassword) setIsAuthenticated(true); }}
           className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none mb-4 text-center"
         />
         <button 
-          onClick={() => { if (password === 'admin123') setIsAuthenticated(true); else alert('Incorrect password'); }}
+          onClick={() => { if (password === adminPassword) setIsAuthenticated(true); else alert('Incorrect password'); }}
           className="w-full py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary-dark transition-colors"
         >
           Login to Dashboard
@@ -191,7 +192,15 @@ export default function AdminDashboard() {
                           <Eye className="w-5 h-5 text-primary" /> Payment Screenshot
                         </h3>
                         <div className="rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
-                          <img src={sub.paymentScreenshotUrl} alt="Payment" className="max-w-full max-h-[500px] object-contain" />
+                          <img 
+                            src={sub.paymentScreenshotUrl ? (
+                              sub.paymentScreenshotUrl.includes('cloudinary.com') && sub.paymentScreenshotUrl.includes('/upload/') 
+                                ? sub.paymentScreenshotUrl.replace('/upload/', '/upload/q_auto,f_auto,w_800/') 
+                                : sub.paymentScreenshotUrl
+                            ) : ''} 
+                            alt="Payment" 
+                            className="max-w-full max-h-[500px] object-contain" 
+                          />
                         </div>
                       </div>
 
