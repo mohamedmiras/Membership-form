@@ -257,12 +257,17 @@ export default function UserForm() {
               
               <div className="pt-4 w-full md:w-auto">
                 <a 
-                  href={`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${PAYMENT_AMOUNT}&cu=INR&tn=${orderId}`}
+                  href={`gpay://upi/pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${PAYMENT_AMOUNT}&cu=INR&tn=${orderId}`}
                   onClick={(e) => {
                     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                    const isAndroid = /Android/i.test(navigator.userAgent);
+                    
                     if (!isMobile) {
                       e.preventDefault();
                       alert("UPI apps cannot be opened on desktop. Please scan the QR Code on the right with your phone's GPay or UPI app to pay.");
+                    } else if (isAndroid) {
+                      // On Android, use the standard UPI intent to ensure it works across all Android versions
+                      e.currentTarget.href = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${PAYMENT_AMOUNT}&cu=INR&tn=${orderId}`;
                     }
                   }}
                   className="w-full md:w-auto px-6 py-4 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 transition-colors flex items-center justify-center gap-3 shadow-md"
