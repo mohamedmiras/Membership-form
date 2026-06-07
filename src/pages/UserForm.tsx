@@ -8,8 +8,8 @@ import ImageCropper from '../components/ImageCropper';
 import heic2any from 'heic2any';
 
 const PAYMENT_AMOUNT = '300'; // Easily configurable amount
-const UPI_ID = 'mirasmt.mt@okicici'; // Replace with your actual UPI ID
-const UPI_NAME = 'Miras MT'; // Updated Name
+const UPI_ID = 'shamsuddeench3@oksbi'; // Replace with your actual UPI ID
+const UPI_NAME = 'Shamsuddeen CH'; // Updated Name
 
 export default function UserForm() {
   const navigate = useNavigate();
@@ -253,7 +253,7 @@ export default function UserForm() {
                 <p className="text-sm text-gray-500 mt-2 font-mono bg-white inline-block px-3 py-1 rounded-md border border-gray-100 shadow-sm">Order ID: {orderId}</p>
               </div>
               <p className="text-gray-600 text-sm">Pay securely using Google Pay. Scan the QR code or tap the button below if you are on a mobile device.</p>
-              <p className="text-sm font-medium text-gray-600 mt-1">GPay Number: <span className="font-bold text-gray-900">9447397075</span></p>
+              <p className="text-sm font-medium text-gray-600 mt-1">GPay Number: <span className="font-bold text-gray-900">+91 96458 72313</span></p>
               
               <div className="pt-4 w-full md:w-auto">
                 <a 
